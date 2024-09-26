@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_package = "com.example.auth";
+option java_outer_classname = "AuthServiceProto";
+
+// Messaggi
+message User {
+    string username = 1;
+    string password = 2;
+}
+
+message AuthRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message AuthResponse {
+    string message = 1;
+    bool success = 2;
+}
+
+// Definizione del servizio
+service AuthService {
+    rpc RegisterUser (User) returns (AuthResponse);
+    rpc Login (AuthRequest) returns (AuthResponse);
+}
