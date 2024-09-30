@@ -1,14 +1,13 @@
 package com.example.auth;
 
+import com.example.dao.UserDAO;
 import io.grpc.stub.StreamObserver;
 import com.example.auth.AuthServiceProto.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class AuthServiceImpl extends AuthServiceGrpc.AuthServiceImplBase {
 
-    private final Map<String, String> users = new HashMap<>();
+    private final UserDAO userDAO = new UserDAO();
 
     @Override
     public void registerUser(User request, StreamObserver<AuthResponse> responseObserver) {
@@ -17,13 +16,17 @@ public class AuthServiceImpl extends AuthServiceGrpc.AuthServiceImplBase {
 
         AuthResponse.Builder response = AuthResponse.newBuilder();
 
-        if (users.containsKey(username)) {
-            response.setSuccess(false)
-                    .setMessage("User already exists");
-        } else {
-            users.put(username, password);
+        // Hash della password usando BCrypt
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+        boolean success = userDAO.registerUser(username, hashedPassword);
+
+        if (success) {
             response.setSuccess(true)
                     .setMessage("User registered successfully");
+        } else {
+            response.setSuccess(false)
+                    .setMessage("User already exists");
         }
 
         responseObserver.onNext(response.build());
@@ -37,7 +40,9 @@ public class AuthServiceImpl extends AuthServiceGrpc.AuthServiceImplBase {
 
         AuthResponse.Builder response = AuthResponse.newBuilder();
 
-        if (users.containsKey(username) && users.get(username).equals(password)) {
+        boolean authenticated = userDAO.authenticateUser(username, password);
+
+        if (authenticated) {
             response.setSuccess(true)
                     .setMessage("Login successful");
         } else {

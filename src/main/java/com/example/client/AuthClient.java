@@ -2,15 +2,14 @@ package com.example.client;
 
 import com.example.auth.AuthServiceGrpc;
 import com.example.auth.AuthServiceProto.*;
+import com.example.util.LoggerUtil;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class AuthClient {
 
-    static Logger logger = LoggerFactory.getLogger(AuthClient.class);
+    private static final String PASSWORD = "password123";
 
     public static void main(String[] args) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8080)
@@ -20,14 +19,24 @@ public class AuthClient {
         AuthServiceGrpc.AuthServiceBlockingStub stub = AuthServiceGrpc.newBlockingStub(channel);
 
         // Register a new user
-        User newUser = User.newBuilder().setUsername("john").setPassword("password123").build();
+        User newUser = User.newBuilder().setUsername("john").setPassword(PASSWORD).build();
         AuthResponse response = stub.registerUser(newUser);
-        logger.info(response.getMessage());
+        LoggerUtil.info(response.getMessage());
+
+        //Register same user
+        User sameUser = User.newBuilder().setUsername("john").setPassword(PASSWORD).build();
+        AuthResponse anotherResponse = stub.registerUser(sameUser);
+        LoggerUtil.info(anotherResponse.getMessage());
 
         // Attempt login
-        AuthRequest loginRequest = AuthRequest.newBuilder().setUsername("john").setPassword("password123").build();
+        AuthRequest loginRequest = AuthRequest.newBuilder().setUsername("john").setPassword(PASSWORD).build();
         AuthResponse loginResponse = stub.login(loginRequest);
-        logger.info(loginResponse.getMessage());
+        LoggerUtil.info(loginResponse.getMessage());
+
+        // Attempt login with wrong password
+        AuthRequest loginRequestError = AuthRequest.newBuilder().setUsername("john").setPassword("123").build();
+        AuthResponse loginResponseError = stub.login(loginRequestError);
+        LoggerUtil.info(loginResponseError.getMessage());
 
         channel.shutdown();
     }

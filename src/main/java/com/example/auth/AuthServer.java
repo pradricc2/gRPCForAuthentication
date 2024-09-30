@@ -1,5 +1,7 @@
 package com.example.auth;
 
+import com.example.util.HibernateUtil;
+import com.example.util.LoggerUtil;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
@@ -12,9 +14,17 @@ public class AuthServer {
                 .addService(new AuthServiceImpl())
                 .build();
 
-        System.out.println("Starting server...");
+        LoggerUtil.info("Starting server...");
         server.start();
-        System.out.println("Server started on port 8080");
+        LoggerUtil.info("Server started on port 8080");
+
+        // Aggiungi un hook per chiudere Hibernate quando il server viene interrotto
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            LoggerUtil.info("Shutting down server...");
+            server.shutdown();
+            HibernateUtil.shutdown();
+            LoggerUtil.info("Server shut down.");
+        }));
 
         server.awaitTermination();
     }
