@@ -9,7 +9,7 @@ public class ConfigUtil {
     private ConfigUtil() {
     }
 
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
 
     static {
         try (InputStream input = ConfigUtil.class.getClassLoader().getResourceAsStream("application.properties")) {
