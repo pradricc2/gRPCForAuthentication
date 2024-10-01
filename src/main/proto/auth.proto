@@ -17,10 +17,21 @@ message AuthRequest {
 message AuthResponse {
     string message = 1;
     bool success = 2;
+    string token = 3;
 }
 
-// Definizione del servizio
+message TokenRequest {
+    string token = 1;
+}
+
+message TokenResponse {
+    bool valid = 1;
+    string username = 2;
+    string message = 3;
+}
+
 service AuthService {
     rpc RegisterUser (User) returns (AuthResponse);
     rpc Login (AuthRequest) returns (AuthResponse);
+    rpc ValidateToken (TokenRequest) returns (TokenResponse);
 }
