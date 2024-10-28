@@ -50,5 +50,14 @@ Il progetto **gRPCForAuthentication** implementa un sistema di autenticazione di
 - **Avvio del Server**: Eseguire `AuthServer` per avviare il servizio di autenticazione.
 - **Client di Autenticazione**: Utilizzare `AuthClient` o `AnotherAuthClient` per testare l'autenticazione con il server.
 
+## Funzionalità Aggiunta di Recente
+- **Integrazione Keycloak**: Introduzione della gestione dei token Keycloak conforme a Oauth 2.0.
+
+## Configurazione Keycloak
+1. Configurare un server Keycloak.
+2. Aggiornare le configurazioni per riflettere le impostazioni di Keycloak.
+
+## Utilizzo Keycloak
+- **Avviare il server di autenticazione**: Eseguire `AuthServer` per avviare il servizio di autenticazione con gestione token Keycloak.
 
 
