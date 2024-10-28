@@ -1,8 +1,6 @@
 package com.example.auth;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.dao.UserDAO;
-import com.example.util.JwtUtil;
 import io.grpc.stub.StreamObserver;
 import com.example.auth.AuthServiceProto.*;
 import org.mindrot.jbcrypt.BCrypt;
@@ -45,11 +43,8 @@ public class AuthServiceImpl extends AuthServiceGrpc.AuthServiceImplBase {
         boolean authenticated = userDAO.authenticateUser(username, password);
 
         if (authenticated) {
-            // Genera un token JWT e lo restituisce come parte della risposta
-            String token = JwtUtil.generateToken(username);
             response.setSuccess(true)
-                    .setMessage("Login successful")
-                    .setToken(token);  // Aggiungi il token alla risposta
+                    .setMessage("Login successful");
         } else {
             response.setSuccess(false)
                     .setMessage("Invalid username or password");
@@ -59,26 +54,4 @@ public class AuthServiceImpl extends AuthServiceGrpc.AuthServiceImplBase {
         responseObserver.onCompleted();
     }
 
-    @Override
-    public void validateToken(TokenRequest request, StreamObserver<TokenResponse> responseObserver) {
-        String token = request.getToken();
-
-        TokenResponse.Builder response = TokenResponse.newBuilder();
-        try {
-            // Validazione del token
-            String username = JwtUtil.validateToken(token);
-
-            if (username != null) {
-                response.setValid(true)
-                        .setUsername(username);
-            } else {
-                response.setValid(false);
-            }
-        } catch (TokenExpiredException e) {
-            response.setValid(false).setMessage("Token expired");
-        }
-
-        responseObserver.onNext(response.build());
-        responseObserver.onCompleted();
-    }
 }

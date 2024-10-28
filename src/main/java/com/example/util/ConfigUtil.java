@@ -26,17 +26,18 @@ public class ConfigUtil {
         }
     }
 
-    // Metodo per ottenere il valore della chiave jwt.secret
-    public static String getJwtSecret() {
-        return properties.getProperty("jwt.secret");
-    }
-
-    // Metodo per ottenere il valore della durata del token jwt.expiration
-    public static long getJwtExpiration() {
-        return Long.parseLong(properties.getProperty("jwt.expiration"));
-    }
 
     public static String getPassword() {
         return properties.getProperty("jwt.password");
     }
+
+    public static String getClientId() { return properties.getProperty("keycloak.resource"); }
+
+    public static String getClientSecret() { return properties.getProperty("keycloak.credentials.secret"); }
+
+    public static String getKeycloakUrl() { return properties.getProperty("keycloak.auth-server-url"); }
+
+    public static String getPort() { return properties.getProperty("server.port"); }
+
+    public static String getJwtFile() { return properties.getProperty("jwt.file"); }
 }
